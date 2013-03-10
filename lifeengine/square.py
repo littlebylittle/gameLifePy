@@ -4,6 +4,7 @@ import pygame
 class Square(pygame.sprite.Sprite):
     checked_color = (0xff, 0, 0)
     unchecked_color = (0xaf, 0xaf, 0xaf)
+    test_color = (0xff, 0xff, 0)
 
     def __init__(self, owner, position,):
         pygame.sprite.Sprite.__init__(self)
@@ -20,10 +21,18 @@ class Square(pygame.sprite.Sprite):
         self.image.fill(color)
 
     def reverse(self):
-        self.checked ^= True
         if self.checked:
-            self.set_color(Square.checked_color)
+            self.set_dead()
         else:
-            self.set_color(Square.unchecked_color)
+            self.set_alive()
+
+    def set_dead(self):
+        self.checked = False
+        self.set_color(Square.unchecked_color)
+
+    def set_alive(self):
+        self.checked = True
+        self.set_color(Square.checked_color)
+
 if __name__ == '__main__':
     pass
