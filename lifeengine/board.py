@@ -10,9 +10,10 @@ class Board():
     colors['white'] = [0xff, 0xff, 0xff]
     colors['black'] = [0, 0, 0]
     colors['grey'] = [0xf4, 0xe2, 0xd1]
-    square_size = 10
+    border_size = 50
 
-    def __init__(self, resolution=(800, 600), sizes=55):
+    def __init__(self, resolution=(800, 600), sizes=155):
+        self.life_in_progress = False
         pygame.init()
         self.screen = pygame.display.set_mode(resolution)
         pygame.display.set_caption('Life game:.')
@@ -20,26 +21,41 @@ class Board():
 
         self.width, self.height = resolution
         self.sizes = sizes
-        border_size = 50
+
         min_line_size = min(resolution)
-        Board.square_size = min_line_size // sizes
-        number_on_x = (resolution[0] - border_size) // Board.square_size
-        number_on_y = (resolution[1] - border_size) // Board.square_size
+        self.square_size = min_line_size // sizes
+        self.number_on_x = (resolution[0] - Board.border_size) // self.square_size
+        self.number_on_y = (resolution[1] - Board.border_size) // self.square_size
 
         self.displayed_sprites = pygame.sprite.RenderPlain()
+        self.squares = []
 
-        for i in range(number_on_x):
-            for j in range(number_on_y):
-                position = (i * Board.square_size + (border_size // 2),
-                            j * Board.square_size + (border_size // 2))
-                current_square = Square(Board, position, Board.colors['grey'])
+        for i in range(self.number_on_x):
+            self.squares.append([])
+
+            for j in range(self.number_on_y):
+                position = (i * self.square_size + (Board.border_size // 2),
+                            j * self.square_size + (Board.border_size // 2))
+                current_square = Square(self, position,)
+                self.squares[i].append(current_square)
                 self.displayed_sprites.add(current_square)
+        print(self.squares)
 
     def render(self):
         self.screen.fill(Board.colors['black'])
-        self.displayed_sprites.draw(self.screen);
+        self.displayed_sprites.draw(self.screen)
         pygame.display.flip()
         pass
+
+    def clicked(self, position):
+        x, y = position
+        x -= Board.border_size // 2
+        y -= Board.border_size // 2
+        column = x // self.square_size
+        row = y // self.square_size
+
+        if (0 <= column < self.number_on_x) and (0 <= row < self.number_on_y):
+            self.squares[column][row].reverse()
 
 
 if __name__ == '__main__':
