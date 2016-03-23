@@ -3,9 +3,9 @@ from lifeengine.board import Board
 
 
 class Game():
-    max_square_size = 50
+    max_square_size = 30
     resolution = (640, 480,)
-    tick_period = 150
+    tick_period = 550
 
     def __init__(self):
         self.clock = pygame.time.Clock()

@@ -1,3 +1,4 @@
+from multiprocessing.process import current_process
 import pygame
 from lifeengine.square import Square
 
@@ -10,7 +11,7 @@ class Board():
     colors['white'] = [0xff, 0xff, 0xff]
     colors['black'] = [0, 0, 0]
     colors['grey'] = [0xf4, 0xe2, 0xd1]
-    border_size = 50
+    border_size = 25
 
     def __init__(self, resolution=(800, 600), sizes=5):
         self.life_in_progress = False
@@ -58,13 +59,15 @@ class Board():
             self.squares[row][column].reverse()
 
     def iteration_world(self):
+        # print("iteration world")
         for i in range(self.number_on_y):
             for j in range(self.number_on_x):
-
+                # print(i, j)
                 self.squares[i][j].next = False
                 #get 9 neighbors for each cell
                 for k in range(i - 1, i + 2):
                     for l in range(j - 1, j + 2):
+
                         if (0 <= k < self.number_on_y) and (0 <= l < self.number_on_x):
                             population = self.check_square(k, l)
                             if not self.squares[k][l].checked:
@@ -80,27 +83,29 @@ class Board():
                 else:
                     self.squares[i][j].set_dead()
 
-    def check_square(self, index_i, index_j):
+    def check_square(self, index_iy, index_jx):
         population = 0
-        if 0 > index_i or index_i > self.number_on_y:
-            return 0
+        for i in (index_iy - 1, index_iy, index_iy + 1):
+            for j in (index_jx - 1, index_jx, index_jx + 1):
+                i_cur = i
+                j_cur = j
 
-        if 0 > index_j or index_j > self.number_on_x:
-            return 0
-        count = 0
-        for i in range(index_i - 1, index_i + 2):
-            for j in range(index_j - 1, index_j + 2):
-                count += 1
-                if 0 <= i < self.number_on_y and 0 <= j < self.number_on_x:
-                    population += self.squares[i][j].checked
+                if i >= self.number_on_y:
+                    i_cur = i - self.number_on_y
+                if i < 0:
+                    i_cur = self.number_on_y + i
+
+                if j >= self.number_on_x:
+                    j_cur = j - self.number_on_x
+                if j < 0:
+                    j_cur = self.number_on_x + j
+
+                population += self.squares[i_cur][j_cur].checked
         return population
 
     def check_world(self):
         if self.life_in_progress:
             self.iteration_world()
-            ##remove that
-            #self.life_in_progress ^= True
-            ##remove that
 
     def kill_all(self):
         for i in range(self.number_on_y):
